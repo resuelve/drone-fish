@@ -1,0 +1,16 @@
+clone:
+  git:
+    image: plugins/git:next
+
+pipeline:
+  publish:
+    image: plugins/docker
+    repo: resuelve/drone-fish
+    secrets: [docker_username, docker_password]
+    tags:
+      - latest
+    when:
+      status: success
+      event: [push, deployment]
+
+branches: master
