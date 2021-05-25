@@ -21,6 +21,8 @@ else
 	fi
 fi
 
+short_commit="${DRONE_COMMIT:0:8}"
+
 case "$DRONE_BUILD_EVENT" in
   pull_request)
     event_ref="#$DRONE_PULL_REQUEST"
@@ -31,7 +33,7 @@ case "$DRONE_BUILD_EVENT" in
     event_link="$DRONE_REPO_LINK/releases/tag/$DRONE_TAG"
   ;;
   push)
-    event_ref="${DRONE_COMMIT:0:8}"
+    event_ref="$short_commit"
     event_link="$DRONE_REPO_LINK/commit/$DRONE_COMMIT"
   ;;
   promote)
@@ -63,7 +65,7 @@ data='{
             {
               "keyValue": {
                 "topLabel": "Commit",
-                "content": "'"${DRONE_COMMIT_REF}"' by '"${DRONE_COMMIT_AUTHOR}"'"
+                "content": "'"${short_commit}"' by '"${DRONE_COMMIT_AUTHOR}"'"
               }
             },
             {
