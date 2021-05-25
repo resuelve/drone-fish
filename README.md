@@ -1,6 +1,6 @@
 # Drone plugin to send an alert to google chat
 
-It sends a message to google chat group with the result of the build
+It sends a message to Google chat channel with the result of the build, the result will be presented as a card.
 
 ## Usage
 
