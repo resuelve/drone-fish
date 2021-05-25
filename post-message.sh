@@ -20,9 +20,9 @@ else
 		EVENT_STATUS=https://raw.githubusercontent.com/resuelve/drone-fish/master/images/success.png
 	fi
 fi
-curl \
-	-H "Content-Type: aplication/json" \
-	-X POST -d '{"text":" *Drone:* '"${DRONE_REPO}"' '"${DRONE_BUILD_LINK}"'
+
+data='{
+  "text":" *Drone:* '"${DRONE_REPO}"' '"${DRONE_BUILD_LINK}"'
   *Commit:* '"${DRONE_COMMIT_REF}"': '"${DRONE_COMMIT_MESSAGE}"'
   *Author:* '"${DRONE_COMMIT_AUTHOR}"'
   *Event #:* '"${DRONE_BUILD_NUMBER}"': '"${DRONE_BUILD_EVENT}"'
@@ -32,15 +32,19 @@ curl \
       "sections": [
         {
        	  "widgets": [
-	    {
-	      "image": {
-	        "imageUrl": "'"${EVENT_STATUS}"'"
-	         }
-	       }
-	    ]
-          }
-        ]
-      }
-    ]
-  }' \
+            {
+              "image": {
+                "imageUrl": "'"${EVENT_STATUS}"'"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}'
+
+curl \
+	-H "Content-Type: aplication/json" \
+	-X POST -d "$data" \
 	"${WEBHOOK_URL}"
