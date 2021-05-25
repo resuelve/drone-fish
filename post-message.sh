@@ -22,6 +22,7 @@ else
 fi
 
 short_commit="${DRONE_COMMIT:0:8}"
+commit_link="$DRONE_REPO_LINK/commit/$DRONE_COMMIT"
 
 case "$DRONE_BUILD_EVENT" in
   pull_request)
@@ -34,7 +35,7 @@ case "$DRONE_BUILD_EVENT" in
   ;;
   push)
     event_ref="$short_commit"
-    event_link="$DRONE_REPO_LINK/commit/$DRONE_COMMIT"
+    event_link="$commit_link"
   ;;
   promote)
     event_ref="build ${DRONE_BUILD_PARENT}"
@@ -65,7 +66,12 @@ data='{
             {
               "keyValue": {
                 "topLabel": "Commit",
-                "content": "'"${short_commit}"' by '"${DRONE_COMMIT_AUTHOR}"'"
+                "content": "'"${short_commit}"' by '"${DRONE_COMMIT_AUTHOR}"'",
+                "onClick": {
+                  "openLink": {
+                    "url": "'"${commit_link}"'"
+                  }
+                }
               }
             },
             {
