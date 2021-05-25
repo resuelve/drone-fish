@@ -8,16 +8,18 @@ elif [ ! -z ${PLUGIN_WEBHOOK} ]; then
 	WEBHOOK_URL=$PLUGIN_WEBHOOK
 fi
 
+images_url="https://raw.githubusercontent.com/resuelve/drone-fish/master/images"
+
 if [ "${DRONE_BUILD_STATUS}" == 'failure' ]; then
 	EVENT_MESS="Uh ..."
-	EVENT_STATUS=https://raw.githubusercontent.com/resuelve/drone-fish/master/images/ups.png
+	EVENT_STATUS="$images_url/ups.png"
 else
 	if [ "${DRONE_BUILD_EVENT}" == 'pull_request' ]; then
 		EVENT_MESS="Por favor CR..."
-		EVENT_STATUS=https://raw.githubusercontent.com/resuelve/drone-fish/master/images/please.png
+		EVENT_STATUS="$images_url/please.png"
     else
 		EVENT_MESS="Listo ..."
-		EVENT_STATUS=https://raw.githubusercontent.com/resuelve/drone-fish/master/images/success.png
+		EVENT_STATUS="$images_url/success.png"
 	fi
 fi
 
@@ -47,7 +49,8 @@ data='{
     {
       "header": {
         "title": "'"${DRONE_REPO}"'",
-        "subtitle": "'"${DRONE_COMMIT_MESSAGE}"'"
+        "subtitle": "'"${DRONE_COMMIT_MESSAGE}"'",
+        "imageUrl": "'"${images_url}"'/status_'"${DRONE_BUILD_STATUS}"'.png"
       },
       "sections": [
         {
