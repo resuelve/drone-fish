@@ -21,6 +21,24 @@ else
 	fi
 fi
 
+case "$DRONE_BUILD_EVENT" in
+  pull_request)
+    event_ref="#$DRONE_PULL_REQUEST"
+    event_link="$DRONE_REPO_LINK/pull/$DRONE_PULL_REQUEST"
+  ;;
+  tag)
+    event_ref="$DRONE_TAG"
+    event_link="$DRONE_REPO_LINK/releases/tag/$DRONE_TAG"
+  ;;
+  push)
+    event_ref="${DRONE_COMMIT:0:8}"
+    event_link="$DRONE_REPO_LINK/commit/$DRONE_COMMIT"
+  ;;
+  promote)
+    event_ref="build ${DRONE_BUILD_PARENT}"
+  ;;
+esac
+
 data='{
   "cards": [
     {
@@ -51,7 +69,12 @@ data='{
             {
               "keyValue": {
                 "topLabel": "Event",
-                "content": "'"${DRONE_BUILD_EVENT}"'"
+                "content": "'"${DRONE_BUILD_EVENT}"' '"${event_ref}"'",
+                "onClick": {
+                  "openLink": {
+                    "url": "'"${event_link:-$DRONE_BUILD_LINK}"'"
+                  }
+                }
               }
             }
           ]
