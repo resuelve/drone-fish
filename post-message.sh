@@ -44,13 +44,25 @@ case "$DRONE_BUILD_EVENT" in
   ;;
 esac
 
-data='{
+data=$(jq -n \
+  --arg title "$DRONE_REPO" \
+  --arg subtitle "$DRONE_COMMIT_MESSAGE" \
+  --arg status_icon "$images_url/status_$DRONE_BUILD_STATUS.png" \
+  --arg build_number "$DRONE_BUILD_NUMBER" \
+  --arg build_link "$DRONE_BUILD_LINK" \
+  --arg commit_text "$short_commit by $DRONE_COMMIT_AUTHOR" \
+  --arg commit_link "$commit_link" \
+  --arg event_text "$DRONE_BUILD_EVENT $event_ref" \
+  --arg event_link "${event_link:-$DRONE_BUILD_LINK}" \
+  --arg ryc_msg "$EVENT_MESS" \
+  --arg ryc_img "$EVENT_STATUS" \
+'{
   "cards": [
     {
       "header": {
-        "title": "'"${DRONE_REPO}"'",
-        "subtitle": "'"${DRONE_COMMIT_MESSAGE}"'",
-        "imageUrl": "'"${images_url}"'/status_'"${DRONE_BUILD_STATUS}"'.png"
+        "title": $title,
+        "subtitle": $subtitle,
+        "imageUrl": $status_icon
       },
       "sections": [
         {
@@ -58,10 +70,10 @@ data='{
             {
               "keyValue": {
                 "topLabel": "Build",
-                "content": "'${DRONE_BUILD_NUMBER}'",
+                "content": $build_number,
                 "onClick": {
                   "openLink": {
-                    "url": "'"${DRONE_BUILD_LINK}"'"
+                    "url": $build_link
                   }
                 }
               }
@@ -69,10 +81,10 @@ data='{
             {
               "keyValue": {
                 "topLabel": "Commit",
-                "content": "'"${short_commit}"' by '"${DRONE_COMMIT_AUTHOR}"'",
+                "content": $commit_text,
                 "onClick": {
                   "openLink": {
-                    "url": "'"${commit_link}"'"
+                    "url": $commit_link
                   }
                 }
               }
@@ -80,10 +92,10 @@ data='{
             {
               "keyValue": {
                 "topLabel": "Event",
-                "content": "'"${DRONE_BUILD_EVENT}"' '"${event_ref}"'",
+                "content": $event_text,
                 "onClick": {
                   "openLink": {
-                    "url": "'"${event_link:-$DRONE_BUILD_LINK}"'"
+                    "url": $event_link
                   }
                 }
               }
@@ -91,11 +103,11 @@ data='{
           ]
         },
         {
-          "header": "'"${EVENT_MESS}"'",
+          "header": $ryc_msg,
        	  "widgets": [
             {
               "image": {
-                "imageUrl": "'"${EVENT_STATUS}"'"
+                "imageUrl": $ryc_img
               }
             }
           ]
@@ -103,7 +115,7 @@ data='{
       ]
     }
   ]
-}'
+}')
 
 curl \
 	-H "Content-Type: aplication/json" \
